@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafcfa;
+  --foreground: #1d271f;
+  --primary: #05893e;
+  --primary-hover: #047f39;
+  --primary-light: #f3fbf4;
+  --border: #e1e8e1;
+  --card-bg: #ffffff;
+  --muted: #64748b;
+  --error: #d03739;
+  --success: #1a9951;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-hind-siliguri), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Marquee continuous scroll animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Skeleton animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f0f5f0 25%, #e4ede4 50%, #f0f5f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
