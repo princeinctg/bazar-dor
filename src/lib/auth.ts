@@ -5,9 +5,11 @@ import Database from "better-sqlite3";
 import path from "path";
 import dns from "dns";
 
-// Fix Windows MongoDB SRV DNS Lookup
+// Fix Windows MongoDB SRV DNS Lookup only on Windows
 try {
-  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+  if (process.platform === "win32") {
+    dns.setServers(["8.8.8.8", "1.1.1.1"]);
+  }
 } catch {
   // Bypass DNS in Restricted Environments
 }
@@ -86,10 +88,28 @@ function getDatabase() {
   return db;
 }
 
+const getBaseURL = () => {
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "http://localhost:3000";
+};
+
 export const auth = betterAuth({
   database: getDatabase(),
   secret: process.env.BETTER_AUTH_SECRET || "bazar-dor-super-secret-key-32-chars-long-12345",
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: getBaseURL(),
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://*.vercel.app",
+    ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+  ],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
