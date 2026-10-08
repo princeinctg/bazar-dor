@@ -14,7 +14,7 @@ try {
 
 // MongoDB Atlas connection string with fallback
 const MONGODB_DEFAULT_URI =
-  "mongodb+srv://princeling:mIziHrbdGW6Rotma@cluster0.x00eiws.mongodb.net/bazardor?retryWrites=true&w=majority&appName=Cluster0";
+  "mongodb+srv://princeling:rAnfWLiN4N31bEAR@cluster0.x00eiws.mongodb.net/bazardor?retryWrites=true&w=majority&appName=Cluster0";
 
 let client: MongoClient | null = null;
 
