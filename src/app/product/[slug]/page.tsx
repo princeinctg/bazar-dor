@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { getProductBySlugOrId, getProducts } from "@/lib/api";
 import ProductDetailsClient from "@/components/ProductDetailsClient";
 
@@ -16,8 +16,12 @@ interface ProductPageProps {
   }>;
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
-  const resolvedParams = await params;
+async function ProductContent({
+  paramsPromise,
+}: {
+  paramsPromise: Promise<{ slug: string }>;
+}) {
+  const resolvedParams = await paramsPromise;
   const product = await getProductBySlugOrId(resolvedParams.slug);
 
   return (
@@ -25,5 +29,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
       product={product}
       slug={resolvedParams.slug}
     />
+  );
+}
+
+export default function ProductPage({ params }: ProductPageProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-pulse">
+          <div className="h-4 w-32 bg-[#f0f5f0] rounded" />
+          <div className="h-40 bg-white rounded-3xl border border-[#e5e7eb]" />
+          <div className="h-32 bg-white rounded-3xl border border-[#e5e7eb]" />
+          <div className="h-64 bg-white rounded-3xl border border-[#e5e7eb]" />
+        </div>
+      }
+    >
+      <ProductContent paramsPromise={params} />
+    </Suspense>
   );
 }
