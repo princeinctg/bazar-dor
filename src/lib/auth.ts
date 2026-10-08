@@ -29,11 +29,20 @@ function getDatabase() {
       const db = cachedMongoClient.db(dbName);
       return mongodbAdapter(db);
     } catch (e) {
-      console.warn("MongoDB connection warning, using SQLite fallback:", e);
+      console.error("MongoDB connection failed:", e);
+      if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+        throw e;
+      }
     }
   }
 
-  // SQLite adapter fallback
+  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+    throw new Error(
+      "MONGODB_URI is missing in production. Please ensure MONGODB_URI is set in Vercel Environment Variables."
+    );
+  }
+
+  // SQLite adapter fallback (only for local offline development)
   const dbPath = path.join(process.cwd(), "auth.db");
   const db = new Database(dbPath);
 
