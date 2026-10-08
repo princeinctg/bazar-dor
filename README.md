@@ -9,7 +9,7 @@
 - **ডেভেলপার:** Prince ([@princeinctg](https://github.com/princeinctg))
 - **কোর্স:** Complete Web Development with Jhankar Mahbub (Batch 14)
 - **অ্যাসাইনমেন্ট:** B14-A7-Bazar-Dor
-- 🌐 **লাইভ লিংক:** bazar-dor-eight-sigma.vercel.app *(বা আপনার Vercel ডেপ্লয়মেন্ট লিংক)*
+- 🌐 **লাইভ লিংক:**  bazar-dor-eight-sigma.vercel.app
 - 💻 **গিটহাব রিপোজিটরি:** [https://github.com/princeinctg/bazar-dor](https://github.com/princeinctg/bazar-dor)
 
 ---
