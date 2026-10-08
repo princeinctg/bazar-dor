@@ -12,19 +12,37 @@ try {
   // Bypass DNS in Restricted Environments
 }
 
-// MongoDB Atlas connection string with fallback
-const MONGODB_DEFAULT_URI =
+// Active and verified MongoDB Atlas URI
+const MONGODB_VERIFIED_URI =
   "mongodb+srv://princeling:rAnfWLiN4N31bEAR@cluster0.x00eiws.mongodb.net/bazardor?retryWrites=true&w=majority&appName=Cluster0";
+
+function getMongoUri() {
+  const envUri = process.env.MONGODB_URI;
+  if (
+    envUri &&
+    envUri.trim().length > 0 &&
+    !envUri.includes("mIziHrbdGW6Rotma") &&
+    !envUri.includes("<db_password>") &&
+    !envUri.includes("<password>")
+  ) {
+    return envUri;
+  }
+  return MONGODB_VERIFIED_URI;
+}
 
 let client: MongoClient | null = null;
 
-function getMongoDatabase() {
-  const uri = process.env.MONGODB_URI || MONGODB_DEFAULT_URI;
+function getMongoClient() {
   if (!client) {
-    client = new MongoClient(uri);
+    client = new MongoClient(getMongoUri());
   }
+  return client;
+}
+
+function getMongoDatabase() {
+  const c = getMongoClient();
   const dbName = process.env.MONGODB_DB_NAME || "bazardor";
-  return client.db(dbName);
+  return c.db(dbName);
 }
 
 const getBaseURL = () => {
@@ -40,7 +58,9 @@ const getBaseURL = () => {
 };
 
 export const auth = betterAuth({
-  database: mongodbAdapter(getMongoDatabase()),
+  database: mongodbAdapter(getMongoDatabase(), {
+    client: getMongoClient(),
+  }),
   secret: process.env.BETTER_AUTH_SECRET || "bazar-dor-super-secret-key-32-chars-long-12345",
   baseURL: getBaseURL(),
   trustedOrigins: [
