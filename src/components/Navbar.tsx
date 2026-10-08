@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import { toBengaliNumber } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { User, LogOut, ChevronDown, Menu, X, ShoppingCart } from "lucide-react";
+import { User, LogOut, ChevronDown, Menu, X } from "lucide-react";
 import { Product } from "@/types";
 
 const CATEGORIES = [
@@ -71,9 +71,16 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#05893e] flex items-center justify-center text-white shadow-xs">
-              <ShoppingCart className="w-5 h-5 fill-current" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-[#05893e] flex items-center justify-center shadow-xs">
+              <Image
+                src="/logo-icon.png"
+                alt="বাজার দর"
+                width={20}
+                height={20}
+                className="w-5 h-5 object-contain brightness-0 invert"
+                priority
+              />
             </div>
             <div>
               <span className="text-xl font-extrabold tracking-tight text-[#1d271f] block leading-tight">
@@ -103,9 +110,10 @@ export default function Navbar() {
                       width={32}
                       height={32}
                       className="object-cover w-full h-full"
+                      unoptimized
                     />
                   </div>
-                  <span className="text-sm font-semibold text-[#1d271f] max-w-[120px] truncate">
+                  <span className="text-sm font-semibold text-[#1d271f] max-w-30 truncate">
                     {session.user.name?.split(" ")[0] || "Rezwan"}
                   </span>
                   <ChevronDown className="w-4 h-4 text-[#64748b]" />
@@ -153,12 +161,18 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <Link
                   href="/signin"
-                  className="px-5 py-1.5 text-sm font-semibold text-[#05893e] border border-[#05893e] hover:bg-[#e8f7ee] rounded-lg transition-all"
+                  className="px-4 py-1.5 text-sm font-semibold text-[#05893e] border border-[#05893e] hover:bg-[#e8f7ee] rounded-lg transition-all"
                 >
                   সাইন ইন
+                </Link>
+                <Link
+                  href="/signup"
+                  className="px-4 py-1.5 text-sm font-semibold text-white bg-[#05893e] hover:bg-[#047f39] rounded-lg shadow-xs transition-all"
+                >
+                  সাইন আপ
                 </Link>
               </div>
             )}
@@ -177,7 +191,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Category Chips Bar (Centered row like Figma) */}
+        {/* Category Chips Bar  */}
         <div className="flex items-center justify-center gap-2 md:gap-3 py-2.5 overflow-x-auto no-scrollbar">
           {CATEGORIES.map((cat) => {
             const isActive = pathname === `/category/${cat.slug}`;
@@ -244,7 +258,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Ticker Strip (White background with top/bottom subtle border) */}
+      {/* Ticker Strip  */}
       <div className="bg-white border-y border-[#e5e7eb] py-2 overflow-hidden select-none">
         <div className="flex animate-marquee whitespace-nowrap">
           {tickerProducts.length > 0 ? (
@@ -267,7 +281,7 @@ export default function Navbar() {
                     href={`/product/${prod.slug}`}
                     className="inline-flex items-center gap-2 mx-4 text-xs hover:opacity-80 transition-opacity cursor-pointer"
                   >
-                    <span className="text-sm">{prod.categoryIcon || "🛒"}</span>
+                    <span className="text-sm">{prod.image || prod.categoryIcon || "🛒"}</span>
                     <span className="font-semibold text-[#1d271f]">
                       {prod.nameBn}
                     </span>
@@ -277,9 +291,9 @@ export default function Navbar() {
                     <span
                       className={`inline-flex items-center text-xs font-bold gap-0.5 ${
                         isUp
-                          ? "text-[#d03739]"
-                          : isDown
                           ? "text-[#05893e]"
+                          : isDown
+                          ? "text-[#d03739]"
                           : "text-[#64748b]"
                       }`}
                     >

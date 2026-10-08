@@ -3,7 +3,6 @@
 import React, { useState, useMemo } from "react";
 import { Product } from "@/types";
 import ProductCard from "./ProductCard";
-import { Search } from "lucide-react";
 import { toBengaliNumber } from "@/lib/utils";
 
 interface HomeProductSectionsProps {
@@ -55,7 +54,7 @@ export default function HomeProductSections({
       );
     }
 
-    // Sort by numeric value (Challenge C1)
+    // Sort by numeric value 
     if (sortOption === "price-asc") {
       list.sort((a, b) => a.today - b.today);
     } else if (sortOption === "price-desc") {
@@ -70,13 +69,13 @@ export default function HomeProductSections({
       {/* SECTION A: আজ দাম বেড়েছে ▲ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-[#d03739] text-base font-bold">▲</span>
+          <span className="text-[#05893e] text-base font-bold">▲</span>
           <h2 className="text-base sm:text-lg font-bold text-[#1d271f]">
             আজ দাম বেড়েছে
           </h2>
         </div>
 
-        {/* 3 Columns Grid (Figma exact match) */}
+        {/* 3 Columns Grid  */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {risers.map((product) => (
             <ProductCard key={`riser-${product.id}`} product={product} />
@@ -87,13 +86,13 @@ export default function HomeProductSections({
       {/* SECTION B: আজ দাম কমেছে ▼ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-[#05893e] text-base font-bold">▼</span>
+          <span className="text-[#d03739] text-base font-bold">▼</span>
           <h2 className="text-base sm:text-lg font-bold text-[#1d271f]">
             আজ দাম কমেছে
           </h2>
         </div>
 
-        {/* 3 Columns Grid (Figma exact match) */}
+        {/* 3 Columns Grid  */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {fallers.map((product) => (
             <ProductCard key={`faller-${product.id}`} product={product} />
@@ -165,7 +164,7 @@ export default function HomeProductSections({
           মোট {toBengaliNumber(filteredProducts.length)}টি পণ্য দেখানো হচ্ছে
         </p>
 
-        {/* Product Cards Grid (3 Columns) */}
+        {/* Product Cards Grid  */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredProducts.map((product) => (

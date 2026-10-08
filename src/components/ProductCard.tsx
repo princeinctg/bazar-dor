@@ -22,7 +22,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Top Part: Icon + Title + Unit */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-11 h-11 rounded-full bg-[#f0f5f0] flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
-          {product.categoryIcon || product.image || "🛒"}
+          {product.image || product.categoryIcon || "🛒"}
         </div>
         <div>
           <h3 className="text-sm sm:text-base font-bold text-[#1d271f] group-hover:text-[#05893e] transition-colors line-clamp-1">
@@ -47,9 +47,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div
           className={`flex items-center gap-0.5 text-xs font-bold ${
             isUp
-              ? "text-[#d03739]"
-              : isDown
               ? "text-[#05893e]"
+              : isDown
+              ? "text-[#d03739]"
               : "text-[#64748b]"
           }`}
         >

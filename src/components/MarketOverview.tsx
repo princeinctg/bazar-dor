@@ -1,6 +1,6 @@
 import React from "react";
 import { Product } from "@/types";
-import { toBengaliCurrency, toBengaliNumber } from "@/lib/utils";
+import { toBengaliNumber } from "@/lib/utils";
 
 interface MarketOverviewProps {
   products: Product[];

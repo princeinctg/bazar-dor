@@ -18,7 +18,6 @@ type SortOption = "default" | "price-asc" | "price-desc";
 export default function CategoryPageClient({
   category,
   initialProducts,
-  slug,
 }: CategoryPageClientProps) {
   const [sortOption, setSortOption] = useState<SortOption>("default");
 
@@ -57,7 +56,7 @@ export default function CategoryPageClient({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
-      {/* Category Banner Card (Figma exact match) */}
+      {/* Category Banner Card  */}
       <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 flex items-center gap-4">
         <div className="w-14 h-14 rounded-full bg-[#f0f5f0] flex items-center justify-center text-3xl shrink-0">
           {category.icon || "🛒"}
@@ -72,7 +71,7 @@ export default function CategoryPageClient({
         </div>
       </div>
 
-      {/* Sort Bar (Figma exact match) */}
+      {/* Sort Bar  */}
       <div className="bg-white rounded-2xl border border-[#e5e7eb] p-3 sm:p-4 flex items-center justify-end">
         <div className="flex items-center gap-2">
           <span className="text-xs text-[#64748b]">সাজান</span>
@@ -94,7 +93,7 @@ export default function CategoryPageClient({
         মোট {toBengaliNumber(sortedProducts.length)}টি পণ্য দেখানো হচ্ছে
       </p>
 
-      {/* 3 Columns Grid (Figma exact match) */}
+      {/* 3 Columns Grid  */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedProducts.map((product) => (
           <ProductCard key={`cat-${product.id}`} product={product} />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
@@ -24,15 +24,15 @@ export default function ProductDetailsClient({
 }: ProductDetailsClientProps) {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [hasNotified, setHasNotified] = useState(false);
+  const hasNotifiedRef = useRef(false);
 
   useEffect(() => {
-    if (!isPending && !session?.user && !hasNotified) {
-      setHasNotified(true);
+    if (!isPending && !session?.user && !hasNotifiedRef.current) {
+      hasNotifiedRef.current = true;
       toast.error("বিস্তারিত তথ্য দেখতে অনুগ্রহ করে প্রথমে সাইন ইন করুন");
       router.push(`/signin?callbackUrl=/product/${slug}`);
     }
-  }, [isPending, session, slug, router, hasNotified]);
+  }, [isPending, session, slug, router]);
 
   if (isPending) {
     return (
@@ -120,11 +120,11 @@ export default function ProductDetailsClient({
         <span className="text-[#1d271f] font-semibold">{product.nameBn}</span>
       </nav>
 
-      {/* Card 1: Top Summary Card (Figma exact match) */}
+      {/* Card 1: Top Summary Card  */}
       <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-[#f0f5f0] flex items-center justify-center text-3xl shrink-0">
-            {product.categoryIcon || product.image || "🍚"}
+            {product.image || product.categoryIcon || "🛒"}
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1d271f]">
@@ -146,7 +146,7 @@ export default function ProductDetailsClient({
         </div>
 
         {/* Right Price Box */}
-        <div className="bg-[#f0f5f0] rounded-2xl p-4 sm:p-5 text-center min-w-[150px]">
+        <div className="bg-[#f0f5f0] rounded-2xl p-4 sm:p-5 text-center min-w-37.5">
           <span className="text-xs text-[#64748b] block mb-1">
             আজকের দাম
           </span>
@@ -159,9 +159,9 @@ export default function ProductDetailsClient({
           <div
             className={`mt-2 inline-flex items-center gap-0.5 text-xs font-bold ${
               isUp
-                ? "text-[#d03739]"
-                : isDown
                 ? "text-[#05893e]"
+                : isDown
+                ? "text-[#d03739]"
                 : "text-[#64748b]"
             }`}
           >
@@ -173,7 +173,7 @@ export default function ProductDetailsClient({
         </div>
       </div>
 
-      {/* Card 2: দামের সারসংক্ষেপ (Figma image 5 exact match) */}
+      {/* Card 2: দামের সারসংক্ষেপ  */}
       <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 space-y-4 shadow-xs">
         <h2 className="text-base font-bold text-[#1d271f]">
           দামের সারসংক্ষেপ
@@ -209,7 +209,7 @@ export default function ProductDetailsClient({
         </div>
       </div>
 
-      {/* Card 3: বাজারভিত্তিক আজকের দাম Table (Figma image 5 exact match) */}
+      {/* Card 3: বাজারভিত্তিক আজকের দাম  */}
       <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 space-y-4 shadow-xs">
         <h2 className="text-base font-bold text-[#1d271f]">
           বাজারভিত্তিক আজকের দাম

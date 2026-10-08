@@ -10,15 +10,11 @@ import { User, Mail, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
 export default function UpdateProfilePage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [name, setName] = useState("");
+  const [editedName, setEditedName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    if (session?.user?.name) {
-      setName(session.user.name);
-    }
-  }, [session]);
+  const name = editedName !== null ? editedName : (session?.user?.name || "");
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -40,14 +36,14 @@ export default function UpdateProfilePage() {
 
     setLoading(true);
     try {
-      // BetterAuth updateUser API (Challenge C3)
-      // Documentation: https://better-auth.com/docs/concepts/users-accounts#update-user
+     
+      // Documentation: 
       const res = await authClient.updateUser({
         name: name.trim(),
       });
 
       if (res?.error) {
-        const msg = res.error.message || "তথ্য আপডেট করা যায়নি";
+        const msg = "তথ্য আপডেট করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।";
         setErrorMessage(msg);
         toast.error(msg);
       } else {
@@ -55,9 +51,8 @@ export default function UpdateProfilePage() {
         router.push("/profile");
         router.refresh();
       }
-    } catch (err: unknown) {
-      const error = err as { message?: string };
-      const msg = error?.message || "তথ্য আপডেট করতে ত্রুটি ঘটেছে";
+    } catch {
+      const msg = "তথ্য আপডেট করতে ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।";
       setErrorMessage(msg);
       toast.error(msg);
     } finally {
@@ -98,7 +93,7 @@ export default function UpdateProfilePage() {
             ✏️
           </div>
           <h1 className="text-2xl font-black text-[#1d271f]">
-            তথ্য আপডেট করুন
+            নাম হালনাগাদ করুন
           </h1>
           <p className="text-xs sm:text-sm text-[#64748b] mt-1">
             আপনার অ্যাকাউন্টের তথ্যাবলী সংশোধন ও সংরক্ষণ করুন।
@@ -128,7 +123,7 @@ export default function UpdateProfilePage() {
             </div>
           </div>
 
-          {/* Name Field (Challenge C3) */}
+          {/* Name */}
           <div>
             <label className="block text-xs font-bold text-[#1d271f] mb-1.5">
               নাম
@@ -138,7 +133,7 @@ export default function UpdateProfilePage() {
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setEditedName(e.target.value)}
                 placeholder="আপনার পূর্ণ নাম লিখুন"
                 required
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#e1e8e1] focus:border-[#05893e] focus:outline-hidden text-sm text-[#1d271f] bg-[#fafcfa]"
@@ -146,7 +141,7 @@ export default function UpdateProfilePage() {
             </div>
           </div>
 
-          {/* Update Button (Challenge C3) */}
+          {/* Update Button */}
           <div className="pt-2">
             <button
               type="submit"
@@ -156,12 +151,12 @@ export default function UpdateProfilePage() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>তথ্য আপডেট হচ্ছে...</span>
+                  <span>হালনাগাদ হচ্ছে...</span>
                 </>
               ) : (
                 <>
                   <CheckCircle className="w-4 h-4" />
-                  <span>আপডেট তথ্য সংরক্ষণ করুন</span>
+                  <span>নাম হালনাগাদ করুন</span>
                 </>
               )}
             </button>

@@ -1,24 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession, signOut, authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import { LogOut, ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [name, setName] = useState("");
+  const [editedName, setEditedName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (session?.user?.name) {
-      setName(session.user.name);
-    }
-  }, [session]);
+  const name = editedName !== null ? editedName : (session?.user?.name || "");
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -51,13 +46,14 @@ export default function ProfilePage() {
         name: name.trim(),
       });
       if (res?.error) {
-        toast.error(res.error.message || "তথ্য আপডেট করা যায়নি");
+        toast.error("তথ্য আপডেট করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।");
       } else {
         toast.success("নাম সফলভাবে আপডেট করা হয়েছে!");
+        setEditedName(null);
         router.refresh();
       }
     } catch {
-      toast.error("তথ্য আপডেট করতে ত্রুটি ঘটেছে");
+      toast.error("তথ্য আপডেট করতে ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
     } finally {
       setLoading(false);
     }
@@ -76,8 +72,10 @@ export default function ProfilePage() {
     return null;
   }
 
+  const initial = (session.user.name || "U").charAt(0).toUpperCase();
+
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Heading */}
       <div className="space-y-1">
         <h1 className="text-2xl font-bold text-[#1d271f]">আমার প্রোফাইল</h1>
@@ -86,20 +84,27 @@ export default function ProfilePage() {
         </p>
       </div>
 
-      {/* Card 1: User details (Figma image 4 exact match) */}
-      <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-4">
-          <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-[#f0f5f0] border border-[#e5e7eb] shrink-0">
-            <Image
-              src={session.user.image || "/avatar.webp"}
-              alt={session.user.name || "User Avatar"}
-              fill
-              className="object-cover"
-            />
-          </div>
+      {/* User details: Avatar, Name, Email, Sign Out */}
+      <div className="flex items-center justify-between gap-4 pt-2">
+        <div className="flex items-center gap-3">
+          {session.user.image ? (
+            <div className="relative w-11 h-11 rounded-full overflow-hidden bg-[#e1e8e1] border border-[#e1e8e1] shrink-0">
+              <Image
+                src={session.user.image}
+                alt={session.user.name || "User Avatar"}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div className="w-14 h-7 rounded-full bg-[#05893e] flex items-center justify-center text-white font-bold text-sm shrink-0">
+              {initial}
+            </div>
+          )}
           <div>
-            <h2 className="text-base font-bold text-[#1d271f]">
-              {session.user.name || "Rezwan Ahmed"}
+            <h2 className="text-base font-bold text-[#1d271f] leading-snug">
+              {session.user.name || "Habib Utsho"}
             </h2>
             <p className="text-xs text-[#64748b]">
               {session.user.email}
@@ -111,44 +116,46 @@ export default function ProfilePage() {
         <button
           type="button"
           onClick={handleSignOut}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[#d03739] text-[#d03739] hover:bg-[#fdeeed] font-semibold text-xs transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#d03739]/50 text-[#d03739] hover:bg-[#fdeeed] font-semibold text-xs transition-colors cursor-pointer"
         >
           <span>↩</span>
           <span>সাইন আউট</span>
         </button>
       </div>
 
-      {/* Card 2: তথ্য / Information update (Figma image 4 exact match) */}
-      <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 space-y-4 shadow-xs">
-        <h3 className="text-base font-bold text-[#1d271f]">তথ্য</h3>
+      {/* নাম হালনাগাদ করুন Section */}
+      <div className="space-y-4 pt-2">
+        <h2 className="text-base font-bold text-[#1d271f]">
+          নাম হালনাগাদ করুন
+        </h2>
 
         <form onSubmit={handleUpdate} className="space-y-4">
-          <div>
-            <label className="block text-xs text-[#64748b] mb-1">
+          <div className="max-w-sm">
+            <label className="block text-xs font-medium text-[#1d271f] mb-1.5">
               নাম
             </label>
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setEditedName(e.target.value)}
               placeholder="আপনার নাম"
               required
-              className="w-full px-3.5 py-2.5 rounded-lg border border-[#e5e7eb] text-xs sm:text-sm text-[#1d271f] focus:outline-hidden focus:border-[#05893e]"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-[#e5e7eb] text-xs sm:text-sm text-[#1d271f] bg-white focus:outline-hidden focus:border-[#05893e]"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-lg border border-[#05893e] text-[#05893e] hover:bg-[#e8f7ee] font-bold text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
+            className="px-5 py-2 rounded-lg bg-[#05893e] hover:bg-[#047f39] text-white font-semibold text-xs sm:text-sm transition-colors cursor-pointer inline-flex items-center justify-center gap-2 disabled:opacity-60 shadow-xs"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>তথ্য আপডেট হচ্ছে...</span>
+                <span>হালনাগাদ হচ্ছে...</span>
               </>
             ) : (
-              <span>আপডেট</span>
+              <span>নাম হালনাগাদ করুন</span>
             )}
           </button>
         </form>

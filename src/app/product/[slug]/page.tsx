@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { getProductBySlugOrId, getProducts } from "@/lib/api";
 import ProductDetailsClient from "@/components/ProductDetailsClient";
 
-// Enable static generation for top products and dynamic fallback for others
+// Hybrid SSG for Products
 export async function generateStaticParams() {
   const products = await getProducts();
   return products.map((p) => ({

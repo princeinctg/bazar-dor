@@ -3,7 +3,7 @@
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "@/lib/auth-client";
+import { signIn, useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 
@@ -11,11 +11,20 @@ function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const defaultEmail = searchParams.get("email") || "";
 
-  const [email, setEmail] = useState("");
+  const { data: session, isPending: sessionLoading } = useSession();
+
+  const [email, setEmail] = useState(defaultEmail);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  React.useEffect(() => {
+    if (!sessionLoading && session?.user) {
+      router.push(callbackUrl === "/signin" ? "/profile" : callbackUrl);
+    }
+  }, [session, sessionLoading, callbackUrl, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,17 +45,20 @@ function SignInForm() {
       });
 
       if (res.error) {
-        const msg = res.error.message || "ইমেইল বা পাসওয়ার্ড ভুল হয়েছে";
+        let msg = "ইমেইল বা পাসওয়ার্ড ভুল হয়েছে। দয়া করে সঠিক তথ্য দিন।";
+        const raw = (res.error.message || "").toLowerCase();
+        if (raw.includes("invalid") || raw.includes("credential") || raw.includes("password") || raw.includes("email")) {
+          msg = "ইমেইল বা পাসওয়ার্ড সঠিক নয়। আপনি কি আগে অ্যাকাউন্ট তৈরি (সাইন আপ) করেছেন?";
+        }
         setErrorMessage(msg);
         toast.error(msg);
       } else {
         toast.success("সফলভাবে সাইন ইন হয়েছে!");
-        router.push(callbackUrl);
+        router.push(callbackUrl === "/signin" || callbackUrl === "/" ? "/profile" : callbackUrl);
         router.refresh();
       }
-    } catch (err: unknown) {
-      const error = err as { message?: string };
-      const msg = error?.message || "সাইন ইন করতে সমস্যা হয়েছে";
+    } catch {
+      const msg = "সাইন ইন করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।";
       setErrorMessage(msg);
       toast.error(msg);
     } finally {
@@ -56,12 +68,19 @@ function SignInForm() {
 
   const handleSocialLogin = async (provider: "google" | "github") => {
     try {
-      await signIn.social({
+      const res = await signIn.social({
         provider,
         callbackURL: callbackUrl,
       });
+      if (res?.error) {
+        toast.error(
+          `${provider === "google" ? "Google" : "GitHub"} ক্লায়েন্ট আইডি কনফিগার করা হয়নি। দয়া করে ইমেইল ও পাসওয়ার্ড দিয়ে সাইন ইন করুন।`
+        );
+      }
     } catch {
-      toast.error(`${provider === "google" ? "Google" : "GitHub"} সাইন ইন বর্তমানে উপলব্ধ নয়`);
+      toast.error(
+        `${provider === "google" ? "Google" : "GitHub"} ক্লায়েন্ট আইডি কনফিগার করা হয়নি। দয়া করে ইমেইল ও পাসওয়ার্ড দিয়ে সাইন ইন করুন।`
+      );
     }
   };
 
@@ -75,7 +94,7 @@ function SignInForm() {
         </p>
       </div>
 
-      {/* Form Card (Figma exact match) */}
+      {/* Form Card  */}
       <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 space-y-5 shadow-xs">
         {errorMessage && (
           <div className="p-3 rounded-xl bg-[#fdeeed] border border-[#d03739]/20 text-[#d03739] text-xs font-semibold">

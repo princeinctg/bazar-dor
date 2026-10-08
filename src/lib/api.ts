@@ -52,7 +52,7 @@ export async function getCategory(slug: string): Promise<Category | null> {
     const category = await fetchWithFallback<Category>(`/categories/${encodeURIComponent(slug)}`);
     return category || null;
   } catch {
-    // If single category endpoint fails, fallback to find in categories list
+    // Fallback Category Fetch to List
     const all = await getCategories();
     return all.find((c) => c.slug === slug || c.id === slug) || null;
   }

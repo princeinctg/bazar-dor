@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   description:
     "নিত্যপ্রয়োজনীয় চাল, ডাল, তেল, সবজি, মাছ, মাংস ও মসলার সঠিক বাজার দর, গড় মূল্য এবং বাজারভিত্তিক তুলনা।",
   keywords: ["বাজার দর", "Bazar Dor", "চাল ডাল সবজি", "বাংলাদেশ বাজার দর"],
+  icons: {
+    icon: "/logo-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -26,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="bn" className={hindSiliguri.variable}>
-      <body className="min-h-screen flex flex-col bg-[#fafcfa] text-[#1d271f] antialiased">
+    <html lang="bn" className={`${hindSiliguri.variable} ${hindSiliguri.className}`}>
+      <body className={`${hindSiliguri.className} min-h-screen flex flex-col bg-[#fafcfa] text-[#1d271f] antialiased`}>
         <Toaster
           position="top-right"
           toastOptions={{
