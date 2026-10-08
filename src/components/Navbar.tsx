@@ -5,9 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
-import { getBengaliDate, toBengaliNumber } from "@/lib/utils";
+import { toBengaliNumber } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { User, LogOut, ChevronDown, Menu, X } from "lucide-react";
+import { User, LogOut, ChevronDown, Menu, X, ShoppingCart } from "lucide-react";
 import { Product } from "@/types";
 
 const CATEGORIES = [
@@ -28,11 +28,8 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [tickerProducts, setTickerProducts] = useState<Product[]>([]);
-  const [banglaDate, setBanglaDate] = useState<string>("বুধবার, ৭ অক্টোবর, ২০২৬");
 
   useEffect(() => {
-    setBanglaDate(getBengaliDate());
-
     // Fetch products for ticker
     fetch("https://api.api-store.workers.dev/api/bazardor/products")
       .then((res) => {
@@ -41,16 +38,15 @@ export default function Navbar() {
       })
       .then((data) => {
         if (Array.isArray(data)) {
-          setTickerProducts(data.slice(0, 15));
+          setTickerProducts(data);
         }
       })
       .catch(() => {
-        // Fallback endpoint
         fetch("https://api.abcz.workers.dev/api/bazardor/products")
           .then((r) => r.json())
           .then((data) => {
             if (Array.isArray(data)) {
-              setTickerProducts(data.slice(0, 15));
+              setTickerProducts(data);
             }
           })
           .catch(() => {});
@@ -70,27 +66,26 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-[#e1e8e1] shadow-xs">
-      {/* Top Bar */}
+    <header className="sticky top-0 z-40 bg-white">
+      {/* Top Header Row */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18">
-          {/* Logo & Bangla Date */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-[#f0f5f0] border border-[#e1e8e1] flex items-center justify-center text-2xl shadow-xs group-hover:scale-105 transition-transform">
-              🛒
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#05893e] flex items-center justify-center text-white shadow-xs">
+              <ShoppingCart className="w-5 h-5 fill-current" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xl font-bold tracking-tight text-[#1d271f]">
-                  বাজার দর
-                </span>
-                <span className="inline-block w-2 h-2 rounded-full bg-[#05893e] animate-pulse"></span>
-              </div>
-              <p className="text-xs text-[#64748b] font-medium">{banglaDate}</p>
+              <span className="text-xl font-extrabold tracking-tight text-[#1d271f] block leading-tight">
+                বাজার দর
+              </span>
+              <p className="text-xs text-[#64748b]">
+                মঙ্গলবার, ৬ অক্টোবর, ২০২৬
+              </p>
             </div>
           </Link>
 
-          {/* Desktop Auth Buttons / User Profile */}
+          {/* Desktop Auth State */}
           <div className="hidden md:flex items-center gap-3">
             {isPending ? (
               <div className="w-24 h-9 bg-[#f0f5f0] rounded-lg animate-pulse" />
@@ -99,9 +94,9 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-[#e1e8e1] hover:border-[#05893e] bg-[#fafcfa] transition-colors"
+                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-full hover:bg-[#f0f5f0] transition-colors cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-[#e1e8e1] relative">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-[#e1e8e1] relative border border-[#e1e8e1]">
                     <Image
                       src={session.user.image || "/avatar.webp"}
                       alt={session.user.name || "User"}
@@ -111,7 +106,7 @@ export default function Navbar() {
                     />
                   </div>
                   <span className="text-sm font-semibold text-[#1d271f] max-w-[120px] truncate">
-                    {session.user.name || "ব্যবহারকারী"}
+                    {session.user.name?.split(" ")[0] || "Rezwan"}
                   </span>
                   <ChevronDown className="w-4 h-4 text-[#64748b]" />
                 </button>
@@ -123,7 +118,7 @@ export default function Navbar() {
                       className="fixed inset-0 z-40"
                       onClick={() => setDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#e1e8e1] py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#e1e8e1] py-2 z-50">
                       <div className="px-4 py-2.5 border-b border-[#f0f5f0]">
                         <p className="text-xs text-[#64748b]">লগইন আছেন</p>
                         <p className="text-sm font-bold text-[#1d271f] truncate">
@@ -148,7 +143,7 @@ export default function Navbar() {
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#d03739] hover:bg-[#fdeeed] transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#d03739] hover:bg-[#fdeeed] transition-colors text-left cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>↩ সাইন আউট</span>
@@ -158,24 +153,18 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Link
                   href="/signin"
-                  className="px-4 py-2 text-sm font-semibold text-[#1d271f] hover:text-[#05893e] border border-[#e1e8e1] hover:border-[#05893e] rounded-xl transition-all"
+                  className="px-5 py-1.5 text-sm font-semibold text-[#05893e] border border-[#05893e] hover:bg-[#e8f7ee] rounded-lg transition-all"
                 >
                   সাইন ইন
-                </Link>
-                <Link
-                  href="/signup"
-                  className="px-4 py-2 text-sm font-semibold text-white bg-[#05893e] hover:bg-[#047f39] rounded-xl shadow-xs transition-all"
-                >
-                  সাইন আপ
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <div className="flex md:hidden items-center gap-2">
             <button
               type="button"
@@ -188,27 +177,30 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Navigation Dropdown */}
+        {/* Category Chips Bar (Centered row like Figma) */}
+        <div className="flex items-center justify-center gap-2 md:gap-3 py-2.5 overflow-x-auto no-scrollbar">
+          {CATEGORIES.map((cat) => {
+            const isActive = pathname === `/category/${cat.slug}`;
+            return (
+              <Link
+                key={cat.slug}
+                href={`/category/${cat.slug}`}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-all ${
+                  isActive
+                    ? "bg-[#05893e] text-white shadow-xs"
+                    : "text-[#1d271f] hover:text-[#05893e]"
+                }`}
+              >
+                <span>{cat.icon}</span>
+                <span>{cat.nameBn}</span>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Mobile menu drawer */}
         {mobileMenuOpen && (
           <div className="md:hidden py-3 border-t border-[#e1e8e1] space-y-2">
-            <div className="grid grid-cols-4 gap-1.5 pb-3 border-b border-[#e1e8e1]">
-              {CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/category/${cat.slug}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex flex-col items-center p-2 rounded-xl text-xs font-semibold text-center transition-colors ${
-                    pathname === `/category/${cat.slug}`
-                      ? "bg-[#05893e] text-white"
-                      : "bg-[#f0f5f0] text-[#1d271f] hover:bg-[#e1e8e1]"
-                  }`}
-                >
-                  <span className="text-base">{cat.icon}</span>
-                  <span className="truncate w-full mt-0.5">{cat.nameBn}</span>
-                </Link>
-              ))}
-            </div>
-
             <div className="pt-2">
               {session?.user ? (
                 <div className="space-y-2">
@@ -234,14 +226,14 @@ export default function Navbar() {
                   <Link
                     href="/signin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-center py-2 text-sm font-semibold border border-[#e1e8e1] rounded-xl text-[#1d271f]"
+                    className="text-center py-2 text-sm font-semibold border border-[#05893e] text-[#05893e] rounded-lg"
                   >
                     সাইন ইন
                   </Link>
                   <Link
                     href="/signup"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-center py-2 text-sm font-semibold bg-[#05893e] text-white rounded-xl"
+                    className="text-center py-2 text-sm font-semibold bg-[#05893e] text-white rounded-lg"
                   >
                     সাইন আপ
                   </Link>
@@ -250,31 +242,10 @@ export default function Navbar() {
             </div>
           </div>
         )}
-
-        {/* Second Row: Desktop Category Chips */}
-        <div className="hidden md:flex items-center gap-2 py-2.5 overflow-x-auto no-scrollbar border-t border-[#f0f5f0]">
-          {CATEGORIES.map((cat) => {
-            const isActive = pathname === `/category/${cat.slug}`;
-            return (
-              <Link
-                key={cat.slug}
-                href={`/category/${cat.slug}`}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                  isActive
-                    ? "bg-[#05893e] text-white shadow-xs scale-105"
-                    : "bg-[#f0f5f0] text-[#1d271f] hover:bg-[#e1e8e1] hover:text-[#05893e]"
-                }`}
-              >
-                <span>{cat.icon}</span>
-                <span>{cat.nameBn}</span>
-              </Link>
-            );
-          })}
-        </div>
       </div>
 
-      {/* Price Ticker / Marquee Below Navbar */}
-      <div className="bg-[#1d271f] text-white py-2 overflow-hidden border-t border-black/10 select-none">
+      {/* Ticker Strip (White background with top/bottom subtle border) */}
+      <div className="bg-white border-y border-[#e5e7eb] py-2 overflow-hidden select-none">
         <div className="flex animate-marquee whitespace-nowrap">
           {tickerProducts.length > 0 ? (
             <>
@@ -294,34 +265,33 @@ export default function Navbar() {
                   <Link
                     key={`${prod.id}-${idx}`}
                     href={`/product/${prod.slug}`}
-                    className="inline-flex items-center gap-2 mx-4 text-xs hover:text-[#4ade80] transition-colors cursor-pointer group"
+                    className="inline-flex items-center gap-2 mx-4 text-xs hover:opacity-80 transition-opacity cursor-pointer"
                   >
                     <span className="text-sm">{prod.categoryIcon || "🛒"}</span>
-                    <span className="font-semibold text-neutral-100 group-hover:underline">
+                    <span className="font-semibold text-[#1d271f]">
                       {prod.nameBn}
                     </span>
-                    <span className="text-neutral-300">
+                    <span className="text-[#64748b]">
                       {toBengaliNumber(prod.today)} টাকা/{unitBn}
                     </span>
                     <span
-                      className={`inline-flex items-center text-[11px] font-bold px-1.5 py-0.5 rounded ${
+                      className={`inline-flex items-center text-xs font-bold gap-0.5 ${
                         isUp
-                          ? "bg-[#05893e]/30 text-[#4ade80]"
+                          ? "text-[#d03739]"
                           : isDown
-                          ? "bg-[#d03739]/30 text-[#f87171]"
-                          : "bg-neutral-800 text-neutral-400"
+                          ? "text-[#05893e]"
+                          : "text-[#64748b]"
                       }`}
                     >
-                      {isUp ? "▲" : isDown ? "▼" : "—"}{" "}
-                      {toBengaliNumber(Math.abs(prod.change?.pct || 0))}%
+                      <span>{isUp ? "▲" : isDown ? "▼" : "—"}</span>
+                      <span>{toBengaliNumber(Math.abs(prod.change?.pct || 0).toFixed(1))}%</span>
                     </span>
-                    <span className="text-neutral-600 ml-2">•</span>
                   </Link>
                 );
               })}
             </>
           ) : (
-            <div className="px-6 text-xs text-neutral-300">
+            <div className="px-6 text-xs text-[#64748b]">
               বাজারের সর্বশেষ তথ্য লোড হচ্ছে...
             </div>
           )}

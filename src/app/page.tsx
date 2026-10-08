@@ -1,7 +1,6 @@
 import React from "react";
 import Hero from "@/components/Hero";
 import HomeProductSections from "@/components/HomeProductSections";
-import MarketOverview from "@/components/MarketOverview";
 import { getProducts, getTopRisers, getTopFallers } from "@/lib/api";
 
 export default async function HomePage() {
@@ -22,9 +21,6 @@ export default async function HomePage() {
         risers={risers}
         fallers={fallers}
       />
-
-      {/* Market Overview Section */}
-      <MarketOverview products={products} />
     </div>
   );
 }

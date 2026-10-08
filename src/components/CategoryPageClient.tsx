@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Product, Category } from "@/types";
 import ProductCard from "./ProductCard";
-import { ArrowLeft, ArrowUpDown, ChevronRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toBengaliNumber } from "@/lib/utils";
 
 interface CategoryPageClientProps {
@@ -32,22 +32,21 @@ export default function CategoryPageClient({
     return list;
   }, [initialProducts, sortOption]);
 
-  // Empty state if category invalid or no products
   if (!category || initialProducts.length === 0) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center">
-        <div className="w-20 h-20 bg-[#fdeeed] text-[#d03739] rounded-3xl flex items-center justify-center mx-auto mb-4 text-4xl shadow-xs">
+        <div className="w-16 h-16 bg-[#fdeeed] text-[#d03739] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
           🔍
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1d271f] mb-2">
+        <h1 className="text-2xl font-bold text-[#1d271f] mb-2">
           ক্যাটাগরিটি খুঁজে পাওয়া যায়নি
         </h1>
-        <p className="text-sm text-[#64748b] mb-6">
-          দুঃখিত, আপনি যে ক্যাটাগরিটি খুঁজছেন তার কোনো পণ্য বর্তমানে উপলব্ধ নেই বা লিংকটি সঠিক নয়।
+        <p className="text-xs sm:text-sm text-[#64748b] mb-6">
+          দুঃখিত, এই ক্যাটাগরিতে বর্তমানে কোনো পণ্য পাওয়া যায়নি।
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#05893e] hover:bg-[#047f39] text-white font-bold text-sm shadow-xs transition-all"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#05893e] text-white text-xs font-semibold hover:bg-[#047f39]"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>হোম পেজে ফিরে যান</span>
@@ -57,73 +56,49 @@ export default function CategoryPageClient({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#64748b]">
-        <Link href="/" className="hover:text-[#05893e] transition-colors">
-          হোম
-        </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <span className="font-semibold text-[#1d271f]">{category.nameBn}</span>
-      </nav>
-
-      {/* Category Header */}
-      <div className="bg-white rounded-3xl border border-[#e1e8e1] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-[#f0f5f0] flex items-center justify-center text-3xl shrink-0 shadow-inner">
-            {category.icon || "🛒"}
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1d271f] flex items-center gap-2">
-              <span>{category.nameBn}</span>
-            </h1>
-            <p className="text-xs sm:text-sm text-[#64748b] mt-1">
-              {toBengaliNumber(initialProducts.length)}টি পণ্যের আজকের দাম ও পরিবর্তন
-            </p>
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+      {/* Category Banner Card (Figma exact match) */}
+      <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 flex items-center gap-4">
+        <div className="w-14 h-14 rounded-full bg-[#f0f5f0] flex items-center justify-center text-3xl shrink-0">
+          {category.icon || "🛒"}
         </div>
-
-        {/* Sort dropdown (Challenge C1) */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-[#fafcfa] border border-[#e1e8e1] rounded-xl px-3 py-2 text-sm">
-            <ArrowUpDown className="w-4 h-4 text-[#05893e]" />
-            <span className="text-xs text-[#64748b] font-medium whitespace-nowrap">
-              সাজান:
-            </span>
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value as SortOption)}
-              className="bg-transparent font-semibold text-xs sm:text-sm text-[#1d271f] focus:outline-hidden cursor-pointer pr-3"
-              aria-label="সাজান"
-            >
-              <option value="default">ডিফল্ট</option>
-              <option value="price-asc">দাম: কম থেকে বেশি</option>
-              <option value="price-desc">দাম: বেশি থেকে কম</option>
-            </select>
-          </div>
-
-          <span className="hidden sm:inline-block text-xs font-semibold px-3 py-2 rounded-xl bg-[#f0f5f0] text-[#1d271f]">
-            মোট {toBengaliNumber(sortedProducts.length)}টি পণ্য
-          </span>
+        <div>
+          <h1 className="text-2xl font-bold text-[#1d271f]">
+            {category.nameBn}
+          </h1>
+          <p className="text-xs text-[#64748b] mt-1">
+            {toBengaliNumber(initialProducts.length)}টি পণ্যের আজকের দাম ও পরিবর্তন
+          </p>
         </div>
       </div>
 
-      {/* Product Cards List */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      {/* Sort Bar (Figma exact match) */}
+      <div className="bg-white rounded-2xl border border-[#e5e7eb] p-3 sm:p-4 flex items-center justify-end">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#64748b]">সাজান</span>
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value as SortOption)}
+            className="border border-[#e5e7eb] rounded-lg px-3 py-1.5 text-xs text-[#1d271f] bg-white cursor-pointer focus:outline-hidden focus:border-[#05893e]"
+            aria-label="সাজান"
+          >
+            <option value="default">ডিফল্ট</option>
+            <option value="price-asc">দাম: কম থেকে বেশি</option>
+            <option value="price-desc">দাম: বেশি থেকে কম</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Count Line */}
+      <p className="text-xs text-[#64748b]">
+        মোট {toBengaliNumber(sortedProducts.length)}টি পণ্য দেখানো হচ্ছে
+      </p>
+
+      {/* 3 Columns Grid (Figma exact match) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedProducts.map((product) => (
           <ProductCard key={`cat-${product.id}`} product={product} />
         ))}
-      </div>
-
-      {/* Back button */}
-      <div>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#05893e] hover:text-[#047f39] transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>হোম পেজে ফিরে যান</span>
-        </Link>
       </div>
     </div>
   );
